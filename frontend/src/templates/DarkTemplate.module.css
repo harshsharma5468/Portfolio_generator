@@ -1,0 +1,28 @@
+.page { background: #0d0d1a; color: #e2e8f0; min-height: 100vh; }
+.hero { background: linear-gradient(135deg, #1a1a3e 0%, #0d0d1a 100%); padding: 4rem 2rem; text-align: center; border-bottom: 1px solid #2d2d4e; }
+.hero h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.title { font-size: 1.2rem; color: #a5b4fc; margin-top: 0.5rem; }
+.summary { max-width: 600px; margin: 1rem auto; color: #94a3b8; line-height: 1.7; }
+.links { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+.links a { color: #818cf8; text-decoration: none; border-bottom: 1px solid #4338ca; padding-bottom: 2px; }
+.links a:hover { color: #a5b4fc; }
+.main { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; display: flex; flex-direction: column; gap: 3rem; }
+.sectionTitle { font-size: 1.4rem; font-weight: 700; color: #a5b4fc; margin-bottom: 1.2rem; padding-bottom: 0.5rem; border-bottom: 1px solid #2d2d4e; }
+.skills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.skill { background: #1e1e3a; border: 1px solid #4338ca; color: #a5b4fc; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+.card { background: #1a1a2e; border: 1px solid #2d2d4e; border-radius: 12px; padding: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; transition: border-color 0.2s; }
+.card:hover { border-color: #6366f1; }
+.card h3 { color: #e2e8f0; font-size: 1rem; }
+.card p { color: #94a3b8; font-size: 0.88rem; line-height: 1.5; flex: 1; }
+.techRow { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tech { background: #0f172a; color: #64748b; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+.cardLinks { display: flex; gap: 1rem; }
+.cardLinks a { color: #818cf8; font-size: 0.85rem; text-decoration: none; }
+.cardLinks a:hover { color: #a5b4fc; }
+.expItem { margin-bottom: 1.5rem; }
+.expHeader { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; color: #e2e8f0; }
+.duration { color: #64748b; font-size: 0.85rem; }
+.expItem ul { padding-left: 1.2rem; color: #94a3b8; line-height: 1.8; font-size: 0.9rem; }
+.eduItem { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; padding: 0.8rem 0; border-bottom: 1px solid #1e293b; color: #e2e8f0; }
+.eduItem span { color: #64748b; font-size: 0.9rem; }

@@ -1,0 +1,36 @@
+.page { background: #f0f4ff; color: #1e293b; min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+.hero { background: #1e293b; color: white; padding: 2.5rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.hero h1 { font-size: 2.2rem; font-weight: 800; }
+.title { color: #94a3b8; margin-top: 0.3rem; }
+.links { display: flex; flex-direction: column; gap: 0.4rem; text-align: right; }
+.links a { color: #818cf8; font-size: 0.85rem; text-decoration: none; }
+.links a:hover { color: #a5b4fc; }
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 100px); }
+.sidebar { background: #1e293b; color: #e2e8f0; padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
+.sidebar h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #64748b; margin-bottom: 0.8rem; }
+.skills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.skill { background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.78rem; }
+.eduItem { margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.1rem; }
+.eduItem strong { font-size: 0.85rem; color: #e2e8f0; }
+.eduItem span { font-size: 0.78rem; color: #64748b; }
+.year { color: #475569 !important; }
+.main { padding: 2.5rem 3rem; display: flex; flex-direction: column; gap: 2.5rem; }
+.summary { color: #475569; line-height: 1.8; font-size: 0.95rem; border-left: 3px solid #6366f1; padding-left: 1rem; }
+.main h2 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem; padding-bottom: 0.4rem; border-bottom: 2px solid #e2e8f0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.card { background: white; border-radius: 10px; padding: 1.2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 0.5rem; transition: box-shadow 0.2s; }
+.card:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.15); }
+.cardTop { display: flex; justify-content: space-between; align-items: flex-start; }
+.card h3 { font-size: 0.95rem; color: #1e293b; }
+.card p { color: #64748b; font-size: 0.85rem; line-height: 1.5; flex: 1; }
+.cardLinks { display: flex; gap: 0.6rem; flex-shrink: 0; }
+.cardLinks a { color: #6366f1; font-size: 0.78rem; text-decoration: none; }
+.techRow { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.tech { background: #f1f5f9; color: #475569; padding: 0.15rem 0.45rem; border-radius: 3px; font-size: 0.72rem; }
+.expItem { margin-bottom: 1.2rem; }
+.expHeader { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.expHeader strong { color: #1e293b; }
+.expHeader span { color: #64748b; font-size: 0.9rem; }
+.duration { margin-left: auto; color: #94a3b8 !important; font-size: 0.82rem !important; }
+.expItem ul { padding-left: 1.2rem; color: #475569; font-size: 0.88rem; line-height: 1.8; }
+@media (max-width: 700px) { .layout { grid-template-columns: 1fr; } .hero { padding: 1.5rem; } .main { padding: 1.5rem; } }

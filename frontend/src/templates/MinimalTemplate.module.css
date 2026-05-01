@@ -1,0 +1,19 @@
+.page { background: #fff; color: #111; min-height: 100vh; font-family: 'Georgia', serif; }
+.container { max-width: 760px; margin: 0 auto; padding: 4rem 2rem; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 2px solid #111; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
+.header h1 { font-size: 2.2rem; font-weight: 700; }
+.title { color: #555; margin-top: 0.3rem; font-style: italic; }
+.links { display: flex; flex-direction: column; gap: 0.3rem; text-align: right; }
+.links a { color: #111; font-size: 0.85rem; text-decoration: none; border-bottom: 1px solid #ccc; }
+.links a:hover { border-color: #111; }
+.summary { color: #444; line-height: 1.8; margin-bottom: 2rem; }
+.section { margin-bottom: 2.5rem; }
+.section h2 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: #888; margin-bottom: 1rem; }
+.skillsLine { color: #333; line-height: 1.8; }
+.item { margin-bottom: 1.2rem; }
+.itemHeader { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.3rem; }
+.meta { color: #888; font-size: 0.85rem; display: flex; gap: 0.8rem; }
+.meta a { color: #555; text-decoration: none; border-bottom: 1px solid #ccc; }
+.item p { color: #444; font-size: 0.9rem; line-height: 1.6; }
+.techLine { color: #888 !important; font-size: 0.82rem !important; margin-top: 0.3rem; }
+.item ul { padding-left: 1.2rem; color: #444; font-size: 0.9rem; line-height: 1.8; }

@@ -1,0 +1,33 @@
+.page { background: #fff; color: #1a1a1a; min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+.header { background: #003366; color: white; padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.header h1 { font-size: 2rem; font-weight: 700; letter-spacing: 0.02em; }
+.title { color: #93c5fd; margin-top: 0.3rem; font-size: 0.95rem; }
+.contact { display: flex; flex-direction: column; gap: 0.4rem; text-align: right; font-size: 0.85rem; }
+.contact span { color: #bfdbfe; }
+.contact a { color: #93c5fd; text-decoration: none; }
+.contact a:hover { color: white; }
+.body { max-width: 900px; margin: 0 auto; padding: 2.5rem 3rem; display: flex; flex-direction: column; gap: 0; }
+.section { margin-bottom: 2rem; }
+.section h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #003366; border-bottom: 2px solid #003366; padding-bottom: 0.3rem; margin-bottom: 1rem; }
+.summary { color: #374151; line-height: 1.8; font-size: 0.95rem; }
+.expItem { margin-bottom: 1.4rem; }
+.expHeader { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem; }
+.expHeader strong { font-size: 1rem; color: #1a1a1a; display: block; }
+.company { color: #374151; font-size: 0.88rem; display: block; }
+.duration { color: #6b7280; font-size: 0.85rem; white-space: nowrap; }
+.expItem ul { padding-left: 1.2rem; color: #374151; font-size: 0.88rem; line-height: 1.8; }
+.projectItem { margin-bottom: 1.2rem; padding: 1rem; background: #f8fafc; border-left: 3px solid #003366; }
+.projectHeader { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.4rem; }
+.projectHeader strong { color: #1a1a1a; }
+.techInline { color: #6b7280; font-size: 0.8rem; }
+.projectItem p { color: #374151; font-size: 0.88rem; line-height: 1.6; }
+.projectLinks { display: flex; gap: 1rem; margin-top: 0.5rem; }
+.projectLinks a { color: #003366; font-size: 0.82rem; text-decoration: none; border-bottom: 1px solid #93c5fd; }
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.skills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.skill { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 0.25rem 0.65rem; border-radius: 3px; font-size: 0.8rem; }
+.eduItem { margin-bottom: 0.8rem; }
+.eduItem strong { display: block; color: #1a1a1a; font-size: 0.9rem; }
+.eduItem span { color: #6b7280; font-size: 0.85rem; display: block; }
+.year { color: #9ca3af !important; font-size: 0.8rem !important; }
+@media (max-width: 700px) { .twoCol { grid-template-columns: 1fr; } .body { padding: 1.5rem; } .header { padding: 1.5rem; } }
