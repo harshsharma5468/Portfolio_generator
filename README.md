@@ -11,6 +11,9 @@ Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses 
 - 📄 PDF resume upload with drag & drop
 - 🤖 LLaMA-4 Maverick extracts skills, projects, experience, education
 - 🎨 4 templates: **Modern**, **Minimal**, **Creative**, **Corporate**
+- 🎯 **ATS Score Checker** — analyse your resume against a job role with a detailed score report
+- 💼 **Job targeting** — enter a target role and paste a job description to tailor your portfolio and ATS analysis
+- 📊 **ATS Score Report** — circular score ring, section breakdown bars, strengths, issues (with severity), missing keywords, and actionable suggestions
 - ⬇️ Download portfolio as PDF
 - 🔗 Shareable link — share your portfolio with a single URL
 - 🔔 Toast notifications for every action
@@ -25,20 +28,24 @@ Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses 
 ```
 portfoklio/
 ├── backend/
-│   ├── server.js          # Express API with rate limiting & sanitization
+│   ├── server.js          # Express API with rate limiting, sanitization & ATS endpoint
 │   ├── package.json
 │   └── .env.example
 └── frontend/
     ├── src/
-    │   ├── App.js                    # Shareable link decoder on load
+    │   ├── App.js                    # Shareable link decoder on load + ATS routing
     │   ├── components/
     │   │   ├── Toast.js              # Toast notification system
     │   │   ├── Toast.module.css
     │   │   ├── Skeleton.js           # AI loading skeleton screen
     │   │   └── Skeleton.module.css
     │   ├── pages/
-    │   │   ├── UploadPage.js         # Upload + template picker
-    │   │   └── PortfolioPage.js      # Preview + share + download
+    │   │   ├── UploadPage.js         # Upload + template picker + job targeting
+    │   │   ├── UploadPage.module.css
+    │   │   ├── PortfolioPage.js      # Preview + share + download
+    │   │   ├── PortfolioPage.module.css
+    │   │   ├── ATSPage.js            # ATS score report UI
+    │   │   └── ATSPage.module.css
     │   └── templates/
     │       ├── index.js              # Template registry
     │       ├── ModernTemplate.js     # Two-column sidebar layout
@@ -104,9 +111,27 @@ Frontend runs at `http://localhost:3000`
 
 1. Open `http://localhost:3000`
 2. Upload your resume PDF
-3. Choose a template
-4. Click **Generate Portfolio**
-5. Download as PDF or click **Share** to copy a shareable link
+3. *(Optional)* Enter a target job role and paste a job description
+4. Choose a template
+5. Click **Generate Portfolio** — or click **Check ATS Score** for a detailed ATS report
+6. Download as PDF or click **Share** to copy a shareable link
+
+---
+
+## 🎯 ATS Score Checker
+
+Click **Check ATS Score** on the upload page to get a full ATS analysis:
+
+| Section | What it shows |
+|---------|--------------|
+| **Score ring** | 0–100 score with colour-coded grade (A+ → D) |
+| **Section breakdown** | Per-section scores: formatting, keywords, experience, skills, education |
+| **Strengths** | What your resume does well |
+| **Issues** | Problems flagged as high / medium / low severity with fix suggestions |
+| **Missing keywords** | Keywords from the job description not found in your resume |
+| **Suggestions** | Ordered list of actionable improvements |
+
+Providing a job role and job description gives the most accurate results.
 
 ---
 
@@ -133,7 +158,7 @@ The free tier includes enough credits to generate many portfolios.
 
 ---
 
-## 🔒 Security & Reliability (Advanced Upgrades)
+## 🔒 Security & Reliability
 
 ### Backend
 - **Rate limiting** — 10 requests per IP per 15 minutes (in-memory, no Redis required)
@@ -143,9 +168,10 @@ The free tier includes enough credits to generate many portfolios.
 - **API key guard** — returns 500 with a clear message if `OPENROUTER_API_KEY` is missing
 - **Axios timeout** — 60-second timeout on OpenRouter requests to prevent hanging connections
 - **Multer error handler** — dedicated Express error middleware catches multer errors cleanly
+- **Health endpoint** — `GET /health` returns server status and timestamp
 
 ### Frontend
-- **Toast notifications** — success / error / info toasts for every user action (file select, upload, share, PDF export)
+- **Toast notifications** — success / error / info toasts for every user action
 - **Skeleton loading screen** — animated shimmer skeleton replaces the upload form while AI is processing
 - **Shareable link** — the Share button encodes portfolio data + template as a base64 URL param; opening the link restores the full portfolio instantly without re-uploading
 - **Template persistence** — last-used template is saved to `localStorage` and restored on next visit
