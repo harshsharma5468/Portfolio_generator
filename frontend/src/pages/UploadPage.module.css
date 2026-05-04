@@ -8,6 +8,19 @@
 .dropIcon { font-size: 2rem; margin-bottom: 0.5rem; }
 .sub { font-size: 0.8rem; margin-top: 0.3rem; }
 .fileName { color: #a5b4fc; font-weight: 600; }
+
+/* Job targeting */
+.jobSection { display: flex; flex-direction: column; gap: 0.6rem; }
+.optional { color: #4b5563; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.78rem; }
+.jobInput { background: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 0.65rem 0.9rem; color: #e5e7eb; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+.jobInput:focus { border-color: #6366f1; }
+.jobInput::placeholder { color: #4b5563; }
+.toggleJD { background: none; border: none; color: #6366f1; font-size: 0.8rem; cursor: pointer; text-align: left; padding: 0; }
+.toggleJD:hover { color: #a5b4fc; }
+.jdTextarea { background: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 0.65rem 0.9rem; color: #e5e7eb; font-size: 0.85rem; outline: none; resize: vertical; transition: border-color 0.2s; font-family: inherit; }
+.jdTextarea:focus { border-color: #6366f1; }
+.jdTextarea::placeholder { color: #4b5563; }
+
 .templateLabel { font-size: 0.82rem; color: #6b7280; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .templateGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 .templateCard { position: relative; background: #1f2937; border: 2px solid #374151; border-radius: 12px; padding: 0; cursor: pointer; text-align: left; transition: all 0.15s; overflow: hidden; display: flex; flex-direction: column; }
@@ -24,4 +37,7 @@
 .generateBtn { padding: 0.85rem; border-radius: 10px; border: none; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
 .generateBtn:hover:not(:disabled) { opacity: 0.9; }
 .generateBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.atsBtn { padding: 0.75rem; border-radius: 10px; border: 1px solid #374151; background: transparent; color: #a5b4fc; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.atsBtn:hover:not(:disabled) { border-color: #6366f1; background: #1e1b4b33; }
+.atsBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 .powered { color: #374151; font-size: 0.8rem; }

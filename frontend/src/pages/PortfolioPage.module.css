@@ -7,6 +7,9 @@
 .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15); }
 .backBtn { padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #9ca3af; cursor: pointer; font-size: 0.85rem; white-space: nowrap; }
 .backBtn:hover { border-color: #6366f1; color: #a5b4fc; }
+.actions { display: flex; gap: 0.5rem; align-items: center; }
+.shareBtn { padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #9ca3af; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.shareBtn:hover { border-color: #6366f1; color: #a5b4fc; }
 .downloadBtn { padding: 0.4rem 1.1rem; border-radius: 8px; border: none; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; font-weight: 600; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
 .downloadBtn:hover { opacity: 0.88; }
 .preview { transition: opacity 0.2s; }

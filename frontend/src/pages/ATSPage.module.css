@@ -1,0 +1,46 @@
+.page { min-height: 100vh; background: #0f0f0f; color: #e5e7eb; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+.toolbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1.5rem; background: #111827; border-bottom: 1px solid #1f2937; }
+.backBtn { padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #9ca3af; cursor: pointer; font-size: 0.85rem; white-space: nowrap; }
+.backBtn:hover { border-color: #6366f1; color: #a5b4fc; }
+.heading { font-size: 1rem; font-weight: 700; color: #e5e7eb; }
+.role { color: #6366f1; font-weight: 600; }
+
+.body { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+.scoreCard { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 2rem; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+.grade { font-size: 3.5rem; font-weight: 900; line-height: 1; }
+.verdict { color: #9ca3af; margin-top: 0.5rem; font-size: 1rem; max-width: 400px; line-height: 1.6; }
+
+.card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+.cardTitle { font-size: 1rem; font-weight: 700; color: #e5e7eb; }
+
+/* Section bars */
+.barRow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem; }
+.barLabel { width: 100px; font-size: 0.85rem; color: #9ca3af; flex-shrink: 0; }
+.barTrack { flex: 1; height: 8px; background: #1f2937; border-radius: 4px; overflow: hidden; }
+.barFill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+.barScore { width: 28px; text-align: right; font-size: 0.82rem; font-weight: 700; flex-shrink: 0; }
+.barComment { font-size: 0.8rem; color: #6b7280; margin-left: 108px; margin-bottom: 0.5rem; }
+
+.twoCol { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 600px) { .twoCol { grid-template-columns: 1fr; } }
+
+/* Strengths */
+.list { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.strengthItem { color: #86efac; font-size: 0.9rem; line-height: 1.5; }
+
+/* Keywords */
+.keywords { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.keyword { background: #1f2937; border: 1px solid #374151; color: #fbbf24; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.8rem; }
+
+/* Issues */
+.issues { display: flex; flex-direction: column; gap: 0.75rem; }
+.issue { background: #0f172a; border-radius: 10px; padding: 1rem; }
+.issueHeader { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; }
+.severity { padding: 0.15rem 0.55rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.issueHeader strong { color: #e5e7eb; font-size: 0.9rem; }
+.issueDetail { color: #9ca3af; font-size: 0.85rem; line-height: 1.6; }
+
+/* Suggestions */
+.suggestions { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; color: #d1d5db; font-size: 0.9rem; line-height: 1.6; }
