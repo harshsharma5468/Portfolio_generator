@@ -1,0 +1,30 @@
+services:
+  # Node.js / Express backend
+  - type: web
+    name: portfoklio-node
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGIN
+        sync: false
+
+  # FastAPI / Python backend
+  - type: web
+    name: portfoklio-fastapi
+    runtime: python
+    rootDir: backend-py
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: 5001
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGIN
+        sync: false

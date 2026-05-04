@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend-node:
+    build: ./backend
+    container_name: portfoklio-node
+    env_file: ./backend/.env
+    environment:
+      - PORT=5000
+      - ALLOWED_ORIGIN=http://localhost:80
+    ports:
+      - "5000:5000"
+
+  backend-py:
+    build: ./backend-py
+    container_name: portfoklio-fastapi
+    env_file: ./backend-py/.env
+    environment:
+      - PORT=5001
+      - ALLOWED_ORIGIN=http://localhost:80
+    ports:
+      - "5001:5001"
+
+  frontend:
+    build: ./frontend
+    container_name: portfoklio-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-node
+      - backend-py

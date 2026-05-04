@@ -4,6 +4,11 @@
 
 Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses your resume, infers skills, projects, and narrative, and renders a beautiful portfolio with 4 templates.
 
+<!-- Add screenshots here once deployed -->
+<!-- ![Upload Page](docs/screenshot-upload.png) -->
+<!-- ![Portfolio Preview](docs/screenshot-portfolio.png) -->
+<!-- ![ATS Report](docs/screenshot-ats.png) -->
+
 ---
 
 ## ✨ Features
@@ -27,94 +32,107 @@ Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses 
 
 ```
 portfoklio/
-├── backend/
-│   ├── server.js          # Express API with rate limiting, sanitization & ATS endpoint
-│   ├── package.json
+├── backend/               # Node.js / Express backend
+│   ├── server.js
+│   ├── Dockerfile
 │   └── .env.example
-└── frontend/
-    ├── src/
-    │   ├── App.js                    # Shareable link decoder on load + ATS routing
-    │   ├── components/
-    │   │   ├── Toast.js              # Toast notification system
-    │   │   ├── Toast.module.css
-    │   │   ├── Skeleton.js           # AI loading skeleton screen
-    │   │   └── Skeleton.module.css
-    │   ├── pages/
-    │   │   ├── UploadPage.js         # Upload + template picker + job targeting
-    │   │   ├── UploadPage.module.css
-    │   │   ├── PortfolioPage.js      # Preview + share + download
-    │   │   ├── PortfolioPage.module.css
-    │   │   ├── ATSPage.js            # ATS score report UI
-    │   │   └── ATSPage.module.css
-    │   └── templates/
-    │       ├── index.js              # Template registry
-    │       ├── ModernTemplate.js     # Two-column sidebar layout
-    │       ├── MinimalTemplate.js    # Whitespace-first typography
-    │       ├── CreativeTemplate.js   # Bold dark animated layout
-    │       └── CorporateTemplate.js  # Formal resume-style layout
-    └── package.json
+├── backend-py/            # FastAPI / Python backend (same endpoints)
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── Dockerfile
+│   └── .env.example
+├── frontend/              # React 18 frontend
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── components/    # Toast, Skeleton
+│   │   ├── pages/         # UploadPage, PortfolioPage, ATSPage
+│   │   └── templates/     # Modern, Minimal, Creative, Corporate
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── vercel.json
+├── docker-compose.yml
+└── render.yaml
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start (Docker — recommended)
+
+```bash
+git clone https://github.com/harshsharma5468/Portfolio_generator.git
+cd Portfolio_generator
+
+# Copy and fill in your API key for both backends
+cp backend/.env.example backend/.env
+cp backend-py/.env.example backend-py/.env
+# Edit both .env files and set OPENROUTER_API_KEY=sk-or-...
+
+docker compose up --build
+```
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:80 |
+| Node.js API | http://localhost:5000 |
+| FastAPI (Python) | http://localhost:5001 |
+| FastAPI docs | http://localhost:5001/docs |
+
+---
+
+## 🛠 Manual Setup
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 18+ (for Node backend + frontend)
+- Python 3.11+ (for FastAPI backend)
 - An [OpenRouter](https://openrouter.ai) API key (free tier works)
 
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/YOUR_USERNAME/portfoklio.git
-cd portfoklio
-```
-
-### 2. Set up the backend
+### Node.js Backend
 
 ```bash
 cd backend
-cp .env.example .env
+cp .env.example .env   # add your OPENROUTER_API_KEY
+npm install
+npm run dev            # http://localhost:5000
 ```
 
-Edit `.env` and add your OpenRouter API key:
-
-```
-PORT=5000
-OPENROUTER_API_KEY=sk-or-xxxxxxxxxxxxxxxx
-ALLOWED_ORIGIN=http://localhost:3000
-```
-
-Install dependencies and start:
+### FastAPI Backend
 
 ```bash
-npm install
-npm run dev
+cd backend-py
+cp .env.example .env   # add your OPENROUTER_API_KEY
+pip install -r requirements.txt
+uvicorn main:app --reload --port 5001   # http://localhost:5001
+# Interactive docs: http://localhost:5001/docs
 ```
 
-Backend runs at `http://localhost:5000`
-
-### 3. Set up the frontend
-
-Open a new terminal:
+### Frontend
 
 ```bash
 cd frontend
 npm install
-npm start
+npm start              # http://localhost:3000
 ```
 
-Frontend runs at `http://localhost:3000`
+---
 
-### 4. Use it
+## ☁️ Deploy
 
-1. Open `http://localhost:3000`
-2. Upload your resume PDF
-3. *(Optional)* Enter a target job role and paste a job description
-4. Choose a template
-5. Click **Generate Portfolio** — or click **Check ATS Score** for a detailed ATS report
-6. Download as PDF or click **Share** to copy a shareable link
+### Frontend → Vercel
+
+1. Import the repo on [vercel.com](https://vercel.com)
+2. Set **Root Directory** to `frontend`
+3. Add env var: `REACT_APP_API_URL=https://your-backend.onrender.com`
+4. Update `frontend/vercel.json` with your backend URL
+5. Deploy
+
+### Backend → Render
+
+1. Connect repo on [render.com](https://render.com)
+2. Render auto-detects `render.yaml` — two services will be created:
+   - `portfoklio-node` (Node.js, port 5000)
+   - `portfoklio-fastapi` (Python, port 5001)
+3. Set `OPENROUTER_API_KEY` and `ALLOWED_ORIGIN` in each service's environment
 
 ---
 
@@ -131,19 +149,6 @@ Click **Check ATS Score** on the upload page to get a full ATS analysis:
 | **Missing keywords** | Keywords from the job description not found in your resume |
 | **Suggestions** | Ordered list of actionable improvements |
 
-Providing a job role and job description gives the most accurate results.
-
----
-
-## 🔑 Getting an OpenRouter API Key
-
-1. Go to [openrouter.ai](https://openrouter.ai)
-2. Sign up / log in
-3. Navigate to **Keys** → **Create Key**
-4. Copy the key into `backend/.env`
-
-The free tier includes enough credits to generate many portfolios.
-
 ---
 
 ## 🛠 Tech Stack
@@ -151,30 +156,24 @@ The free tier includes enough credits to generate many portfolios.
 | Layer | Tech |
 |-------|------|
 | Frontend | React 18, CSS Modules |
-| Backend | Node.js, Express |
-| PDF Parsing | pdf-parse |
+| Backend (Node) | Node.js, Express, pdf-parse |
+| Backend (Python) | FastAPI, pdfplumber, httpx |
 | AI | LLaMA-4 Maverick via OpenRouter |
 | PDF Export | html2canvas + jsPDF |
+| Containerisation | Docker, Docker Compose |
+| Deploy | Vercel (frontend), Render (backends) |
 
 ---
 
 ## 🔒 Security & Reliability
 
-### Backend
-- **Rate limiting** — 10 requests per IP per 15 minutes (in-memory, no Redis required)
-- **PDF MIME validation** — multer rejects non-PDF uploads at the file filter level
-- **Input sanitization** — strips null bytes, truncates resume text to 15,000 characters to prevent prompt injection and oversized payloads
-- **Structured error responses** — all errors return `{ error: "..." }` with correct HTTP status codes (400, 422, 429, 500)
-- **API key guard** — returns 500 with a clear message if `OPENROUTER_API_KEY` is missing
-- **Axios timeout** — 60-second timeout on OpenRouter requests to prevent hanging connections
-- **Multer error handler** — dedicated Express error middleware catches multer errors cleanly
-- **Health endpoint** — `GET /health` returns server status and timestamp
-
-### Frontend
-- **Toast notifications** — success / error / info toasts for every user action
-- **Skeleton loading screen** — animated shimmer skeleton replaces the upload form while AI is processing
-- **Shareable link** — the Share button encodes portfolio data + template as a base64 URL param; opening the link restores the full portfolio instantly without re-uploading
-- **Template persistence** — last-used template is saved to `localStorage` and restored on next visit
+- **Rate limiting** — 10 requests per IP per 15 minutes
+- **PDF MIME validation** — rejects non-PDF uploads
+- **Input sanitization** — strips null bytes, truncates to 15,000 chars (prompt injection protection)
+- **Structured error responses** — correct HTTP status codes (400, 422, 429, 500)
+- **API key guard** — clear error if key is missing
+- **60s timeout** on OpenRouter requests
+- **Health endpoint** — `GET /health`
 
 ---
 
@@ -189,16 +188,13 @@ The free tier includes enough credits to generate many portfolios.
 
 ---
 
-## 📦 Build for Production
+## 🔑 Getting an OpenRouter API Key
 
-```bash
-# Build frontend
-cd frontend
-npm run build
+1. Go to [openrouter.ai](https://openrouter.ai)
+2. Sign up / log in → **Keys** → **Create Key**
+3. Copy into `backend/.env` and/or `backend-py/.env`
 
-# Serve the build folder with any static host (Vercel, Netlify, etc.)
-# Deploy backend to Railway, Render, or any Node.js host
-```
+The free tier includes enough credits to generate many portfolios.
 
 ---
 
