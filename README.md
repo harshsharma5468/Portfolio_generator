@@ -4,17 +4,12 @@
 
 Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses your resume, infers skills, projects, and narrative, and renders a beautiful portfolio with 4 templates.
 
-<!-- Add screenshots here once deployed -->
-<!-- ![Upload Page](docs/screenshot-upload.png) -->
-<!-- ![Portfolio Preview](docs/screenshot-portfolio.png) -->
-<!-- ![ATS Report](docs/screenshot-ats.png) -->
-
 ---
 
 ## ✨ Features
 
 - 📄 PDF resume upload with drag & drop
-- 🤖 LLaMA-4 Maverick extracts skills, projects, experience, education
+- 🤖 LLaMA-4 Maverick extracts skills, projects, experience, and education
 - 🎨 4 templates: **Modern**, **Minimal**, **Creative**, **Corporate**
 - 🎯 **ATS Score Checker** — analyse your resume against a job role with a detailed score report
 - 💼 **Job targeting** — enter a target role and paste a job description to tailor your portfolio and ATS analysis
@@ -28,87 +23,112 @@ Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses 
 
 ---
 
+## 🏗 Dual Backend
+
+The same API is implemented in two stacks — swap between them by changing the proxy target in `docker-compose.yml`.
+
+| Backend | Stack | Port | Docs |
+|---------|-------|------|------|
+| `backend/` | Node.js + Express | 5000 | — |
+| `backend-py/` | Python + FastAPI | 5001 | `http://localhost:5001/docs` |
+
+Both expose identical endpoints: `POST /api/generate`, `POST /api/ats`, `GET /health`.
+
+---
+
 ## 🗂 Project Structure
 
 ```
 portfoklio/
-├── backend/               # Node.js / Express backend
-│   ├── server.js
-│   ├── Dockerfile
+├── backend/                    # Node.js / Express backend
+│   ├── server.js               # /api/generate, /api/ats, /health
+│   ├── Dockerfile              # Node 18 Alpine
+│   ├── package.json
 │   └── .env.example
-├── backend-py/            # FastAPI / Python backend (same endpoints)
-│   ├── main.py
+├── backend-py/                 # Python / FastAPI backend (identical API)
+│   ├── main.py                 # /api/generate, /api/ats, /health
+│   ├── Dockerfile              # Python 3.11 slim
 │   ├── requirements.txt
-│   ├── Dockerfile
 │   └── .env.example
-├── frontend/              # React 18 frontend
+├── frontend/
 │   ├── src/
-│   │   ├── App.js
-│   │   ├── components/    # Toast, Skeleton
-│   │   ├── pages/         # UploadPage, PortfolioPage, ATSPage
-│   │   └── templates/     # Modern, Minimal, Creative, Corporate
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── vercel.json
-├── docker-compose.yml
-└── render.yaml
+│   │   ├── App.js              # Shareable link decoder + ATS routing
+│   │   ├── components/
+│   │   │   ├── Toast.js        # Toast notification system
+│   │   │   └── Skeleton.js     # AI loading skeleton screen
+│   │   ├── pages/
+│   │   │   ├── UploadPage.js   # Upload + template picker + job targeting
+│   │   │   ├── PortfolioPage.js# Preview + share + download
+│   │   │   └── ATSPage.js      # ATS score report UI
+│   │   └── templates/
+│   │       ├── index.js        # Template registry
+│   │       ├── ModernTemplate.js
+│   │       ├── MinimalTemplate.js
+│   │       ├── CreativeTemplate.js
+│   │       └── CorporateTemplate.js
+│   ├── Dockerfile              # Multi-stage React build → nginx
+│   ├── nginx.conf              # SPA routing + /api/ proxy to Node backend
+│   ├── vercel.json             # SPA rewrites for Vercel
+│   └── package.json
+├── docker-compose.yml          # One command spins up all 3 services
+├── render.yaml                 # Render deploy config (both backends)
+└── README.md
 ```
 
 ---
 
-## 🚀 Quick Start (Docker — recommended)
+## 🚀 Getting Started
+
+### Option A — Docker (recommended)
+
+Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ```bash
 git clone https://github.com/harshsharma5468/Portfolio_generator.git
 cd Portfolio_generator
 
-# Copy and fill in your API key for both backends
-cp backend/.env.example backend/.env
-cp backend-py/.env.example backend-py/.env
-# Edit both .env files and set OPENROUTER_API_KEY=sk-or-...
+cp backend/.env.example backend/.env         # add your OpenRouter API key
+cp backend-py/.env.example backend-py/.env   # add your OpenRouter API key
 
 docker compose up --build
 ```
 
 | Service | URL |
 |---------|-----|
-| Frontend | http://localhost:80 |
-| Node.js API | http://localhost:5000 |
-| FastAPI (Python) | http://localhost:5001 |
-| FastAPI docs | http://localhost:5001/docs |
+| Frontend | http://localhost:3000 |
+| Node backend | http://localhost:5000 |
+| FastAPI backend | http://localhost:5001 |
+| FastAPI Swagger UI | http://localhost:5001/docs |
 
----
+### Option B — Manual (Node backend)
 
-## 🛠 Manual Setup
-
-### Prerequisites
-
-- Node.js 18+ (for Node backend + frontend)
-- Python 3.11+ (for FastAPI backend)
-- An [OpenRouter](https://openrouter.ai) API key (free tier works)
-
-### Node.js Backend
+**Prerequisites:** Node.js 18+
 
 ```bash
+# Backend
 cd backend
-cp .env.example .env   # add your OPENROUTER_API_KEY
+cp .env.example .env   # add OPENROUTER_API_KEY
 npm install
 npm run dev            # http://localhost:5000
+
+# Frontend (new terminal)
+cd frontend
+npm install
+npm start              # http://localhost:3000
 ```
 
-### FastAPI Backend
+### Option C — Manual (FastAPI backend)
+
+**Prerequisites:** Python 3.11+
 
 ```bash
+# Backend
 cd backend-py
-cp .env.example .env   # add your OPENROUTER_API_KEY
+cp .env.example .env   # add OPENROUTER_API_KEY
 pip install -r requirements.txt
 uvicorn main:app --reload --port 5001   # http://localhost:5001
-# Interactive docs: http://localhost:5001/docs
-```
 
-### Frontend
-
-```bash
+# Frontend (new terminal)
 cd frontend
 npm install
 npm start              # http://localhost:3000
@@ -116,29 +136,31 @@ npm start              # http://localhost:3000
 
 ---
 
-## ☁️ Deploy
+## 🔑 Getting an OpenRouter API Key
 
-### Frontend → Vercel
+1. Go to [openrouter.ai](https://openrouter.ai)
+2. Sign up / log in → **Keys** → **Create Key**
+3. Copy the key into `backend/.env` and/or `backend-py/.env`
 
-1. Import the repo on [vercel.com](https://vercel.com)
-2. Set **Root Directory** to `frontend`
-3. Add env var: `REACT_APP_API_URL=https://your-backend.onrender.com`
-4. Update `frontend/vercel.json` with your backend URL
-5. Deploy
+```
+OPENROUTER_API_KEY=sk-or-xxxxxxxxxxxxxxxx
+```
 
-### Backend → Render
+The free tier includes enough credits to generate many portfolios.
 
-1. Connect repo on [render.com](https://render.com)
-2. Render auto-detects `render.yaml` — two services will be created:
-   - `portfoklio-node` (Node.js, port 5000)
-   - `portfoklio-fastapi` (Python, port 5001)
-3. Set `OPENROUTER_API_KEY` and `ALLOWED_ORIGIN` in each service's environment
+---
+
+## 📖 Usage
+
+1. Open the app and upload your resume PDF (drag & drop or click)
+2. *(Optional)* Enter a target job role and paste a job description for tailored output
+3. Choose a template
+4. Click **Generate Portfolio** to get your personalized portfolio — or **Check ATS Score** for a full ATS analysis
+5. Download as PDF or click **Share** to copy a shareable URL
 
 ---
 
 ## 🎯 ATS Score Checker
-
-Click **Check ATS Score** on the upload page to get a full ATS analysis:
 
 | Section | What it shows |
 |---------|--------------|
@@ -149,6 +171,8 @@ Click **Check ATS Score** on the upload page to get a full ATS analysis:
 | **Missing keywords** | Keywords from the job description not found in your resume |
 | **Suggestions** | Ordered list of actionable improvements |
 
+Providing a job role and job description gives the most accurate results.
+
 ---
 
 ## 🛠 Tech Stack
@@ -156,24 +180,31 @@ Click **Check ATS Score** on the upload page to get a full ATS analysis:
 | Layer | Tech |
 |-------|------|
 | Frontend | React 18, CSS Modules |
-| Backend (Node) | Node.js, Express, pdf-parse |
-| Backend (Python) | FastAPI, pdfplumber, httpx |
+| Node backend | Node.js, Express, pdf-parse, multer, axios |
+| Python backend | FastAPI, pdfplumber, httpx, python-multipart |
 | AI | LLaMA-4 Maverick via OpenRouter |
 | PDF Export | html2canvas + jsPDF |
 | Containerisation | Docker, Docker Compose |
-| Deploy | Vercel (frontend), Render (backends) |
+| Deploy | Render (backends) + Vercel (frontend) |
 
 ---
 
 ## 🔒 Security & Reliability
 
+### Both backends
 - **Rate limiting** — 10 requests per IP per 15 minutes
-- **PDF MIME validation** — rejects non-PDF uploads
-- **Input sanitization** — strips null bytes, truncates to 15,000 chars (prompt injection protection)
-- **Structured error responses** — correct HTTP status codes (400, 422, 429, 500)
-- **API key guard** — clear error if key is missing
-- **60s timeout** on OpenRouter requests
-- **Health endpoint** — `GET /health`
+- **PDF MIME validation** — rejects non-PDF uploads at the file filter level
+- **Input sanitization** — strips null bytes, truncates resume text to 15,000 characters to prevent prompt injection and oversized payloads
+- **Structured error responses** — all errors return `{ "error": "..." }` with correct HTTP status codes (400, 422, 429, 500)
+- **API key guard** — returns 500 with a clear message if `OPENROUTER_API_KEY` is missing
+- **Request timeout** — 60-second timeout on OpenRouter calls to prevent hanging connections
+- **Health endpoint** — `GET /health` returns server status and timestamp
+
+### Frontend
+- **Toast notifications** — success / error / info toasts for every user action
+- **Skeleton loading screen** — animated shimmer replaces the upload form while AI processes
+- **Shareable link** — encodes portfolio data + template as a base64 URL param; restores the full portfolio instantly without re-uploading
+- **Template persistence** — last-used template saved to `localStorage` and restored on next visit
 
 ---
 
@@ -188,13 +219,41 @@ Click **Check ATS Score** on the upload page to get a full ATS analysis:
 
 ---
 
-## 🔑 Getting an OpenRouter API Key
+## ☁️ Deploy
 
-1. Go to [openrouter.ai](https://openrouter.ai)
-2. Sign up / log in → **Keys** → **Create Key**
-3. Copy into `backend/.env` and/or `backend-py/.env`
+### Backends → Render
 
-The free tier includes enough credits to generate many portfolios.
+A `render.yaml` is included. Push to GitHub, connect the repo on [render.com](https://render.com), and Render will auto-detect and create both backend services.
+
+Add `OPENROUTER_API_KEY` as an environment variable in the Render dashboard for each service.
+
+### Frontend → Vercel
+
+A `vercel.json` is included for SPA routing. Before deploying:
+
+1. Update the backend proxy URL in `vercel.json` to your Render backend URL
+2. Push to GitHub and import the repo on [vercel.com](https://vercel.com)
+
+```bash
+# Or deploy via CLI
+npm i -g vercel
+cd frontend
+vercel --prod
+```
+
+---
+
+## 📦 Build for Production (manual)
+
+```bash
+# Build frontend
+cd frontend
+npm run build
+# Serve the build/ folder on Vercel, Netlify, or any static host
+
+# Node backend — deploy to Railway, Render, or any Node.js host
+# FastAPI backend — deploy to Render, Railway, or any Python host
+```
 
 ---
 
