@@ -29,3 +29,15 @@ services:
     depends_on:
       - backend-node
       - backend-py
+
+  code-editor:
+    image: codercom/code-server:latest
+    container_name: portfolio-code-editor
+    ports:
+      - "8443:8443"
+    environment:
+      - PASSWORD=admin123
+      - SUDO_PASSWORD=admin123
+    volumes:
+      - ./:/home/coder/project
+    working_dir: /home/coder/project

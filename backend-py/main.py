@@ -179,6 +179,107 @@ async def api_ats(
     data = await analyse_ats(resume_text, jobRole.strip(), jobDescription.strip())
     return {"success": True, "data": data}
 
+@app.post("/api/tailor")
+async def api_tailor(
+    request: Request,
+    resume: UploadFile = File(...),
+    jobRole: str = Form(""),
+    jobDescription: str = Form(""),
+):
+    check_rate(request.client.host)
+    if not jobDescription.strip():
+        raise HTTPException(status_code=400, detail="Job description is required for tailoring.")
+    if resume.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
+    pdf_bytes = await resume.read()
+    resume_text = extract_text(pdf_bytes)
+    if not resume_text.strip():
+        raise HTTPException(status_code=422, detail="Could not extract text from PDF.")
+
+    safe_resume = sanitize(resume_text)
+    safe_jd = sanitize(jobDescription)
+
+    prompt = f"""You are an expert resume writer. Rewrite the resume below to be perfectly tailored for the job description provided. Return ONLY valid JSON:
+{{
+  "name": "Full Name",
+  "title": "Job-targeted title",
+  "summary": "2-3 sentence tailored summary using keywords from the JD",
+  "skills": ["skill1", "skill2"],
+  "experience": [{{"company":"","role":"","duration":"","points":["rewritten bullet using action verbs and JD keywords"]}}],
+  "projects": [{{"name":"","description":"one-liner tailored to JD","tech":[]}}],
+  "education": [{{"institution":"","degree":"","year":""}}],
+  "keywords_used": ["keyword1", "keyword2"]
+}}
+
+Rules:
+- Rewrite experience bullets to be impact-driven (start with action verbs, include metrics where possible)
+- Naturally embed keywords from the job description
+- Keep all facts truthful — only rephrase, never fabricate
+- Prioritise skills and experience most relevant to the role
+
+Target Role: {jobRole}
+Job Description:
+{safe_jd}
+
+Resume:
+{safe_resume}"""
+
+    parsed = await call_ai(prompt)
+    if not parsed.get("name") or not isinstance(parsed.get("experience"), list):
+        raise HTTPException(status_code=500, detail="Tailoring failed. Please try again.")
+    return {"success": True, "data": parsed}
+
+
+@app.post("/api/analyze-jd")
+async def api_analyze_jd(
+    request: Request,
+    resume: UploadFile = File(...),
+    jobRole: str = Form(""),
+    jobDescription: str = Form(""),
+):
+    check_rate(request.client.host)
+    if not jobDescription.strip():
+        raise HTTPException(status_code=400, detail="Job description is required for analysis.")
+    if resume.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Only PDF files are accepted.")
+    pdf_bytes = await resume.read()
+    resume_text = extract_text(pdf_bytes)
+    if not resume_text.strip():
+        raise HTTPException(status_code=422, detail="Could not extract text from PDF.")
+
+    safe_resume = sanitize(resume_text)
+    safe_jd = sanitize(jobDescription)
+
+    prompt = f"""You are an expert career coach and technical recruiter. Analyse the job description against the candidate's resume and return ONLY valid JSON:
+{{
+  "mustHaveSkills": ["skill1", "skill2"],
+  "niceToHaveSkills": ["skill1"],
+  "candidateHas": ["skill already in resume"],
+  "gaps": ["missing skill or experience"],
+  "projectIdeas": [{{"title":"Project name","description":"1-2 sentence idea that fills a gap","skills":["skill1"],"difficulty":"easy|medium|hard"}}],
+  "fitScore": 72,
+  "fitSummary": "One sentence on how well the candidate fits",
+  "quickWins": ["Actionable thing to do this week to improve fit"]
+}}
+
+Rules:
+- fitScore is 0-100 integer
+- projectIdeas should be concrete, buildable in 1-2 weeks, and directly address gaps
+- quickWins are specific actions (e.g. "Add a Redis caching layer to your existing project")
+
+Target Role: {jobRole}
+Job Description:
+{safe_jd}
+
+Candidate Resume:
+{safe_resume}"""
+
+    parsed = await call_ai(prompt)
+    if not isinstance(parsed.get("mustHaveSkills"), list):
+        raise HTTPException(status_code=500, detail="JD analysis failed. Please try again.")
+    return {"success": True, "data": parsed}
+
+
 @app.get("/health")
 async def health():
     from datetime import datetime, timezone

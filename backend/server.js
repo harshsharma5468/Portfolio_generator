@@ -182,6 +182,115 @@ app.post("/api/ats", rateLimit, upload.single("resume"), async (req, res) => {
   }
 });
 
+// ── Resume tailoring ──────────────────────────────────────────────────────────
+async function tailorResume(resumeText, jobRole, jobDescription) {
+  const safeResume = sanitize(resumeText);
+  const safeJD = sanitize(jobDescription);
+
+  const prompt = `You are an expert resume writer. Rewrite the resume below to be perfectly tailored for the job description provided. Return ONLY valid JSON:
+{
+  "name": "Full Name",
+  "title": "Job-targeted title",
+  "summary": "2-3 sentence tailored summary using keywords from the JD",
+  "skills": ["skill1", "skill2"],
+  "experience": [{"company":"","role":"","duration":"","points":["rewritten bullet using action verbs and JD keywords"]}],
+  "projects": [{"name":"","description":"one-liner tailored to JD","tech":[]}],
+  "education": [{"institution":"","degree":"","year":""}],
+  "keywords_used": ["keyword1", "keyword2"]
+}
+
+Rules:
+- Rewrite experience bullets to be impact-driven (start with action verbs, include metrics where possible)
+- Naturally embed keywords from the job description
+- Keep all facts truthful — only rephrase, never fabricate
+- Prioritise skills and experience most relevant to the role
+
+Target Role: ${jobRole}
+Job Description:
+${safeJD}
+
+Resume:
+${safeResume}`;
+
+  const parsed = await callAI(prompt);
+  if (!parsed.name || !Array.isArray(parsed.experience)) throw new Error("Tailoring failed. Please try again.");
+  return parsed;
+}
+
+// ── JD analysis ───────────────────────────────────────────────────────────────
+async function analyzeJD(resumeText, jobRole, jobDescription) {
+  const safeResume = sanitize(resumeText);
+  const safeJD = sanitize(jobDescription);
+
+  const prompt = `You are an expert career coach and technical recruiter. Analyse the job description against the candidate's resume and return ONLY valid JSON:
+{
+  "mustHaveSkills": ["skill1", "skill2"],
+  "niceToHaveSkills": ["skill1"],
+  "candidateHas": ["skill already in resume"],
+  "gaps": ["missing skill or experience"],
+  "projectIdeas": [{"title":"Project name","description":"1-2 sentence idea that fills a gap","skills":["skill1"],"difficulty":"easy|medium|hard"}],
+  "fitScore": 72,
+  "fitSummary": "One sentence on how well the candidate fits",
+  "quickWins": ["Actionable thing to do this week to improve fit"]
+}
+
+Rules:
+- fitScore is 0-100 integer
+- projectIdeas should be concrete, buildable in 1-2 weeks, and directly address gaps
+- quickWins are specific actions (e.g. "Add a Redis caching layer to your existing project")
+
+Target Role: ${jobRole}
+Job Description:
+${safeJD}
+
+Candidate Resume:
+${safeResume}`;
+
+  const parsed = await callAI(prompt);
+  if (!Array.isArray(parsed.mustHaveSkills)) throw new Error("JD analysis failed. Please try again.");
+  return parsed;
+}
+
+app.post("/api/tailor", rateLimit, upload.single("resume"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No PDF file uploaded." });
+    if (!process.env.OPENROUTER_API_KEY) return res.status(500).json({ error: "Server is missing API key configuration." });
+    const { jobRole = "", jobDescription = "" } = req.body;
+    if (!jobDescription.trim()) return res.status(400).json({ error: "Job description is required for tailoring." });
+
+    const resumeText = await extractTextFromPDF(req.file.buffer);
+    if (!resumeText.trim()) return res.status(422).json({ error: "Could not extract text from PDF." });
+
+    const data = await tailorResume(resumeText, jobRole.trim(), jobDescription.trim());
+    res.json({ success: true, data });
+  } catch (err) {
+    const status = err.response?.status || 500;
+    const message = err.response?.data?.error?.message || err.message || "Tailoring failed.";
+    console.error(`[${new Date().toISOString()}] /api/tailor error:`, message);
+    res.status(status >= 400 && status < 600 ? status : 500).json({ error: message });
+  }
+});
+
+app.post("/api/analyze-jd", rateLimit, upload.single("resume"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No PDF file uploaded." });
+    if (!process.env.OPENROUTER_API_KEY) return res.status(500).json({ error: "Server is missing API key configuration." });
+    const { jobRole = "", jobDescription = "" } = req.body;
+    if (!jobDescription.trim()) return res.status(400).json({ error: "Job description is required for analysis." });
+
+    const resumeText = await extractTextFromPDF(req.file.buffer);
+    if (!resumeText.trim()) return res.status(422).json({ error: "Could not extract text from PDF." });
+
+    const data = await analyzeJD(resumeText, jobRole.trim(), jobDescription.trim());
+    res.json({ success: true, data });
+  } catch (err) {
+    const status = err.response?.status || 500;
+    const message = err.response?.data?.error?.message || err.message || "JD analysis failed.";
+    console.error(`[${new Date().toISOString()}] /api/analyze-jd error:`, message);
+    res.status(status >= 400 && status < 600 ? status : 500).json({ error: message });
+  }
+});
+
 app.get("/health", (_, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
 app.use((err, req, res, _next) => {

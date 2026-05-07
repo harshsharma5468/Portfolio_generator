@@ -10,8 +10,10 @@ Powered by **LLaMA-4 Maverick** via [OpenRouter](https://openrouter.ai). Parses 
 
 - 📄 PDF resume upload with drag & drop
 - 🤖 LLaMA-4 Maverick extracts skills, projects, experience, and education
-- 🎨 4 templates: **Modern**, **Minimal**, **Creative**, **Corporate**
+- 🎨 8 templates: **Modern**, **Minimal**, **Creative**, **Corporate**, **Professional**, **Academic**, **Coral**, **Serif**
 - 🎯 **ATS Score Checker** — analyse your resume against a job role with a detailed score report
+- ✂️ **Resume Tailoring Engine** — AI rewrites your resume bullets with action verbs and JD keywords; export as Word (.doc)
+- 🔍 **Job Description Analyzer** — extracts must-have skills, highlights gaps, suggests buildable projects to fill them, and gives a candidate fit score
 - 💼 **Job targeting** — enter a target role and paste a job description to tailor your portfolio and ATS analysis
 - 📊 **ATS Score Report** — circular score ring, section breakdown bars, strengths, issues (with severity), missing keywords, and actionable suggestions
 - ⬇️ Download portfolio as PDF
@@ -32,7 +34,7 @@ The same API is implemented in two stacks — swap between them by changing the 
 | `backend/` | Node.js + Express | 5000 | — |
 | `backend-py/` | Python + FastAPI | 5001 | `http://localhost:5001/docs` |
 
-Both expose identical endpoints: `POST /api/generate`, `POST /api/ats`, `GET /health`.
+Both expose identical endpoints: `POST /api/generate`, `POST /api/ats`, `POST /api/tailor`, `POST /api/analyze-jd`, `GET /health`.
 
 ---
 
@@ -41,31 +43,37 @@ Both expose identical endpoints: `POST /api/generate`, `POST /api/ats`, `GET /he
 ```
 portfoklio/
 ├── backend/                    # Node.js / Express backend
-│   ├── server.js               # /api/generate, /api/ats, /health
+│   ├── server.js               # /api/generate, /api/ats, /api/tailor, /api/analyze-jd, /health
 │   ├── Dockerfile              # Node 18 Alpine
 │   ├── package.json
 │   └── .env.example
 ├── backend-py/                 # Python / FastAPI backend (identical API)
-│   ├── main.py                 # /api/generate, /api/ats, /health
+│   ├── main.py                 # /api/generate, /api/ats, /api/tailor, /api/analyze-jd, /health
 │   ├── Dockerfile              # Python 3.11 slim
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── App.js              # Shareable link decoder + ATS routing
+│   │   ├── App.js              # Shareable link decoder + page routing
 │   │   ├── components/
 │   │   │   ├── Toast.js        # Toast notification system
 │   │   │   └── Skeleton.js     # AI loading skeleton screen
 │   │   ├── pages/
 │   │   │   ├── UploadPage.js   # Upload + template picker + job targeting
 │   │   │   ├── PortfolioPage.js# Preview + share + download
-│   │   │   └── ATSPage.js      # ATS score report UI
+│   │   │   ├── ATSPage.js      # ATS score report UI
+│   │   │   ├── TailorPage.js   # Tailored resume display + Word export
+│   │   │   └── JDAnalyzerPage.js# JD analysis: skills, gaps, project ideas
 │   │   └── templates/
 │   │       ├── index.js        # Template registry
 │   │       ├── ModernTemplate.js
 │   │       ├── MinimalTemplate.js
 │   │       ├── CreativeTemplate.js
-│   │       └── CorporateTemplate.js
+│   │       ├── CorporateTemplate.js
+│   │       ├── ProfessionalTemplate.js
+│   │       ├── AcademicTemplate.js
+│   │       ├── CoralTemplate.js
+│   │       └── SerifTemplate.js
 │   ├── Dockerfile              # Multi-stage React build → nginx
 │   ├── nginx.conf              # SPA routing + /api/ proxy to Node backend
 │   ├── vercel.json             # SPA rewrites for Vercel
@@ -155,7 +163,11 @@ The free tier includes enough credits to generate many portfolios.
 1. Open the app and upload your resume PDF (drag & drop or click)
 2. *(Optional)* Enter a target job role and paste a job description for tailored output
 3. Choose a template
-4. Click **Generate Portfolio** to get your personalized portfolio — or **Check ATS Score** for a full ATS analysis
+4. Pick an action:
+   - **Generate Portfolio** — builds your personalized portfolio site
+   - **Check ATS Score** — full ATS analysis with score, gaps, and suggestions
+   - **Tailor Resume** — AI rewrites your bullets for the pasted job description; export as Word
+   - **Analyze Job Description** — extracts required skills, highlights your gaps, and suggests projects to fill them
 5. Download as PDF or click **Share** to copy a shareable URL
 
 ---
@@ -172,6 +184,30 @@ The free tier includes enough credits to generate many portfolios.
 | **Suggestions** | Ordered list of actionable improvements |
 
 Providing a job role and job description gives the most accurate results.
+
+---
+
+## ✂️ Resume Tailoring Engine
+
+Paste a job description and click **Tailor Resume**. The AI rewrites every experience bullet to:
+- Start with strong action verbs
+- Embed keywords from the job description naturally
+- Highlight impact and metrics
+
+The tailored resume is displayed in a clean layout and can be exported as a Word `.doc` file (no extra dependencies — opens correctly in Microsoft Word).
+
+---
+
+## 🔍 Job Description Analyzer
+
+| Section | What it shows |
+|---------|--------------|
+| **Fit score ring** | 0–100 candidate fit score, colour-coded |
+| **Must-have skills** | ✓ green = you have it · ✗ red = missing |
+| **Nice-to-have skills** | Bonus skills from the JD |
+| **Gaps** | Skills or experience the JD requires that you lack |
+| **Quick wins** | Specific actions to improve fit this week |
+| **Project ideas** | Concrete buildable projects (with easy/medium/hard difficulty) that directly fill your gaps |
 
 ---
 

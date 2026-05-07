@@ -7,10 +7,12 @@ import styles from "./UploadPage.module.css";
 
 const STORAGE_KEY = "pf_template";
 
-export default function UploadPage({ onGenerated, onATS }) {
+export default function UploadPage({ onGenerated, onATS, onTailor, onJDAnalyze }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingATS, setLoadingATS] = useState(false);
+  const [loadingTailor, setLoadingTailor] = useState(false);
+  const [loadingJD, setLoadingJD] = useState(false);
   const [error, setError] = useState("");
   const [drag, setDrag] = useState(false);
   const [selected, setSelected] = useState(() => localStorage.getItem(STORAGE_KEY) || "modern");
@@ -63,7 +65,37 @@ export default function UploadPage({ onGenerated, onATS }) {
     } finally { setLoadingATS(false); }
   };
 
-  if (loading || loadingATS) {
+  const handleTailor = async () => {
+    if (!file) { setError("Please select a PDF resume."); show("No file selected.", "error"); return; }
+    if (!jobDescription.trim()) { setError("Paste a job description to tailor your resume."); show("Job description required.", "error"); return; }
+    setLoadingTailor(true); setError("");
+    show("Tailoring your resume…", "info");
+    try {
+      const { data } = await axios.post("/api/tailor", buildForm());
+      show("Resume tailored!", "success");
+      onTailor(data.data, jobRole);
+    } catch (e) {
+      const msg = e.response?.data?.error || "Tailoring failed.";
+      setError(msg); show(msg, "error");
+    } finally { setLoadingTailor(false); }
+  };
+
+  const handleJDAnalyze = async () => {
+    if (!file) { setError("Please select a PDF resume."); show("No file selected.", "error"); return; }
+    if (!jobDescription.trim()) { setError("Paste a job description to analyse."); show("Job description required.", "error"); return; }
+    setLoadingJD(true); setError("");
+    show("Analysing job description…", "info");
+    try {
+      const { data } = await axios.post("/api/analyze-jd", buildForm());
+      show("JD analysis complete!", "success");
+      onJDAnalyze(data.data, jobRole);
+    } catch (e) {
+      const msg = e.response?.data?.error || "JD analysis failed.";
+      setError(msg); show(msg, "error");
+    } finally { setLoadingJD(false); }
+  };
+
+  if (loading || loadingATS || loadingTailor || loadingJD) {
     return (
       <div className={styles.page}>
         <div className={styles.hero}><h1 className={styles.logo}>⚡ Portfoklio</h1></div>
@@ -103,7 +135,19 @@ export default function UploadPage({ onGenerated, onATS }) {
             type="text"
             placeholder="e.g. AI/ML Engineer, Frontend Developer, Data Scientist"
             value={jobRole}
-            onChange={(e) => setJobRole(e.target.value)}
+            maxLength={100}
+            onChange={(e) => {
+              const val = e.target.value;
+              // If user pastes something long (>100 chars), move it to the JD textarea
+              if (val.length > 100) {
+                setJobDescription(val);
+                setJobRole("");
+                setShowJD(true);
+                show("Moved to job description field.", "info");
+              } else {
+                setJobRole(val);
+              }
+            }}
           />
           <button className={styles.toggleJD} onClick={() => setShowJD(!showJD)}>
             {showJD ? "▲ Hide" : "▼ Paste"} job description
@@ -148,11 +192,17 @@ export default function UploadPage({ onGenerated, onATS }) {
 
         {error && <p className={styles.error}>{error}</p>}
 
-        <button className={styles.generateBtn} onClick={handleSubmit} disabled={loading || loadingATS}>
+        <button className={styles.generateBtn} onClick={handleSubmit} disabled={loading || loadingATS || loadingTailor || loadingJD}>
           ✨ Generate Portfolio
         </button>
-        <button className={styles.atsBtn} onClick={handleATS} disabled={loading || loadingATS}>
+        <button className={styles.atsBtn} onClick={handleATS} disabled={loading || loadingATS || loadingTailor || loadingJD}>
           🎯 Check ATS Score
+        </button>
+        <button className={styles.tailorBtn} onClick={handleTailor} disabled={loading || loadingATS || loadingTailor || loadingJD}>
+          ✂️ Tailor Resume
+        </button>
+        <button className={styles.jdBtn} onClick={handleJDAnalyze} disabled={loading || loadingATS || loadingTailor || loadingJD}>
+          🔍 Analyze Job Description
         </button>
       </div>
 
